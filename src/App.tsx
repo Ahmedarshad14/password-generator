@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 
 function App() {
   
@@ -6,6 +6,8 @@ const [length, setLength] = useState(6)
 const [numAllowed, setNumAllowed] = useState(false)
 const [charsAllowed, setCharsAllowed ] = useState(false)
 const [password, setPassword] = useState('')
+
+const pwref = useRef(null)
 
 const pwGenerator = useCallback(() => {
   let pass = '';
@@ -20,6 +22,10 @@ const pwGenerator = useCallback(() => {
   }
 setPassword(pass)
 }, [length, numAllowed, charsAllowed, setPassword])
+const copyPasswordToClipboard = useCallback(() => {
+  pwref.current?.select();
+  window.navigator.clipboard.writeText(password)
+}, [password])
 
 useEffect( () => {pwGenerator()}, [length, numAllowed, charsAllowed, pwGenerator])
   return (
@@ -28,9 +34,10 @@ useEffect( () => {pwGenerator()}, [length, numAllowed, charsAllowed, pwGenerator
       <input type="text"
       value={password}
       className="outline-none w-full py-1 px-3"
+      ref={pwref}      
       readOnly
       placeholder="Password" />
-      <button className="bg-orange-500 text-white px-2">Copy</button>
+      <button className="bg-orange-500 text-white px-2" onClick={copyPasswordToClipboard}>Copy</button>
       </div>
       <div className="flex text-sm gap-x-2">
         <div className="flex items-center gap-x-1">
